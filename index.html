@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>France Alps | Majestic Minimal</title>
+    <style>
+        :root {
+            --cold-bg: #f4f7fb;
+            --cold-text: #1a1f2b;
+            --cold-accent: #2c3e50;
+            --warm-cream: #f9f6f0;
+            --warm-gold: #b4843c;
+            --white: #ffffff;
+            --shadow-cold: 0 8px 30px rgba(0, 0, 0, 0.05);
+            --shadow-warm: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --transition-smooth: 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+            background: var(--cold-bg);
+            color: var(--cold-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .title-xl {
+            font-size: clamp(3.5rem, 12vw, 8rem);
+            font-weight: 200;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 60px rgba(0, 0, 0, 0.7);
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            color: var(--cold-accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            font-weight: 300;
+            color: #5a6a7a;
+            max-width: 500px;
+            letter-spacing: 0.03em;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            mix-blend-mode: difference;
+            color: white;
+            transition: background 0.3s, padding 0.3s;
+        }
+        .nav.scrolled {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            mix-blend-mode: normal;
+            color: var(--cold-text);
+            padding: 1rem 3rem;
+        }
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: inherit;
+            font-weight: 400;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: opacity 0.3s;
+        }
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+        #heroCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .hero-bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.9) contrast(1.1);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .section {
+            padding: 7rem 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section-header {
+            margin-bottom: 4rem;
+        }
+
+        .welcome-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .welcome-img {
+            width: 100%;
+            height: auto;
+            border-radius: 2px;
+            box-shadow: var(--shadow-cold);
+            transition: transform 0.6s ease;
+        }
+        .welcome-img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Destinations – hover overlay */
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .dest-card {
+            position: relative;
+            border-radius: 2px;
+            box-shadow: var(--shadow-cold);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .dest-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+        .dest-card-img {
+            width: 100%;
+            height: 420px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease, filter 0.4s;
+        }
+        .dest-card:hover .dest-card-img {
+            transform: scale(1.03);
+            filter: brightness(0.5);
+        }
+        .dest-card-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            z-index: 2;
+            transition: opacity 0.3s;
+        }
+        .dest-card-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.65);
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.8;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .dest-card:hover .dest-card-overlay {
+            opacity: 1;
+        }
+        .dest-card:hover .dest-card-title {
+            opacity: 0;
+        }
+        .dest-card.show-overlay .dest-card-overlay {
+            opacity: 1;
+        }
+        .dest-card.show-overlay .dest-card-title {
+            opacity: 0;
+        }
+
+        .video-section {
+            background: #1a1f2b;
+            padding: 6rem 2rem;
+            text-align: center;
+            color: white;
+        }
+        .video-wrapper {
+            max-width: 800px;
+            margin: 2rem auto 0;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .video-wrapper iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        .activity-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+            aspect-ratio: 3/4;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.8rem;
+            color: white;
+            transition: transform 0.4s, box-shadow 0.4s;
+            box-shadow: var(--shadow-cold);
+        }
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 70%);
+            z-index: 1;
+        }
+        .activity-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+        .activity-card-content {
+            position: relative;
+            z-index: 2;
+        }
+        .activity-card h4 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .activity-card p {
+            font-size: 0.85rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .cuisine-section {
+            background: var(--warm-cream);
+            padding: 7rem 3rem;
+        }
+        .cuisine-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .cuisine-text h2 {
+            font-size: 2.4rem;
+            font-weight: 300;
+            color: #4a3b2f;
+            margin-bottom: 1.5rem;
+        }
+        .cuisine-text p {
+            color: #5e5348;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+        .cuisine-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+        .cuisine-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            gap: 1rem;
+        }
+        .cuisine-img {
+            width: 100%;
+            height: auto;
+            border-radius: 2px;
+            box-shadow: var(--shadow-warm);
+            transition: transform 0.6s ease;
+        }
+        .cuisine-img:hover {
+            transform: scale(1.02);
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .tip-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 2px;
+            box-shadow: var(--shadow-cold);
+            transition: transform 0.4s;
+        }
+        .tip-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem;
+            font-size: 0.8rem;
+            color: #8a9aa8;
+            letter-spacing: 0.05em;
+            background: #fff;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Audio control button */
+        .audio-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 2000;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.08);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            color: var(--cold-accent);
+        }
+        .audio-control:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            transform: scale(1.05);
+        }
+        .audio-control.playing {
+            background: var(--cold-accent);
+            color: white;
+            border-color: var(--cold-accent);
+            animation: pulseAudio 2s infinite;
+        }
+        @keyframes pulseAudio {
+            0% { box-shadow: 0 0 0 0 rgba(44, 62, 80, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(44, 62, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(44, 62, 80, 0); }
+        }
+
+        @media (max-width: 900px) {
+            .destinations-grid,
+            .activities-grid,
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+            .welcome-grid,
+            .cuisine-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav {
+                padding: 1rem 1.5rem;
+            }
+            .section {
+                padding: 4rem 1.5rem;
+            }
+            .dest-card-img {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" id="navbar">
+        <div class="nav-logo">France Alps</div>
+        <ul class="nav-links">
+            <li><a href="#welcome">Welcome</a></li>
+            <li><a href="#destinations">Destinations</a></li>
+            <li><a href="#video">Video</a></li>
+            <li><a href="#activities">Seasons</a></li>
+            <li><a href="#cuisine">Cuisine</a></li>
+            <li><a href="#tips">Tips</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1800" 
+             alt="Snowy peak" 
+             class="hero-bg-img"
+             crossorigin="anonymous">
+        <canvas id="heroCanvas"></canvas>
+        <div class="hero-content">
+            <h1 class="title-xl">France Alps</h1>
+        </div>
+    </section>
+
+    <!-- Welcome -->
+    <section class="section" id="welcome">
+        <div class="welcome-grid">
+            <div>
+                <h2 class="section-title">Welcome to the Roof of Western Europe</h2>
+                <p style="font-weight:300; color:#3a4a5a; margin-bottom:1.2rem;">
+                    The French Alps stretch across southeast France, with Mont Blanc (4,809 m) as Western Europe's highest peak. 
+                    This region offers world‑class skiing, charming mountain towns, exquisite cuisine, and outdoor activities for every season.
+                </p>
+                <p style="font-weight:300; color:#3a4a5a;">
+                    Whether you seek thrill, relaxation, or gastronomy, the Alps deliver an unforgettable experience.
+                </p>
+            </div>
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" 
+                 alt="Mont Blanc" 
+                 class="welcome-img"
+                 loading="lazy">
+        </div>
+    </section>
+
+    <!-- Destinations -->
+    <section class="section" id="destinations">
+        <div class="section-header">
+            <h2 class="section-title">Top 3 Destinations</h2>
+            <p class="section-subtitle">Each a distinct expression of alpine majesty.</p>
+        </div>
+        <div class="destinations-grid">
+            <div class="dest-card" onclick="this.classList.toggle('show-overlay')">
+                <img src="https://images.unsplash.com/photo-1605135693932-f1d6fb1aa44e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" class="dest-card-img" alt="Chamonix" loading="lazy">
+                <div class="dest-card-title">Chamonix‑Mont‑Blanc</div>
+                <div class="dest-card-overlay">Cradle of mountaineering (first ascent in 1786) and host of the 1924 Winter Olympics. Ride the Aiguille du Midi cable car for panoramic views, hike the legendary Tour du Mont Blanc, or step into the glass skywalk “Step into the Void.”</div>
+            </div>
+            <div class="dest-card" onclick="this.classList.toggle('show-overlay')">
+                <img src="https://images.unsplash.com/photo-1596406613716-48a0ff7e9e8e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" class="dest-card-img" alt="Annecy" loading="lazy">
+                <div class="dest-card-title">Annecy</div>
+                <div class="dest-card-overlay">The “Venice of the Alps.” Crystal‑clear lake, canals, and the romantic Pont des Amours. Explore the old town and visit the castle for a stunning lake view.</div>
+            </div>
+            <div class="dest-card" onclick="this.classList.toggle('show-overlay')">
+                <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d5ff?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" class="dest-card-img" alt="Courchevel" loading="lazy">
+                <div class="dest-card-title">Courchevel</div>
+                <div class="dest-card-overlay">Luxury skiing at its finest. Home to 7 Michelin‑starred restaurants and perfectly groomed slopes in the world's largest ski area.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video -->
+    <section class="video-section" id="video">
+        <h2 class="section-title" style="color:white;">See It in Motion</h2>
+        <p style="color:rgba(255,255,255,0.7); max-width:500px; margin:0 auto;">Breathtaking scenery and winter sports from the French Alps.</p>
+        <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/WQFMjGhdGbs?rel=0&modestbranding=1" title="French Alps Scenery" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <!-- Activities -->
+    <section class="section" id="activities">
+        <div class="section-header">
+            <h2 class="section-title">Year‑Round Activities</h2>
+            <p class="section-subtitle text-center" style="max-width:600px; margin-left:auto; margin-right:auto;">From powder slopes to blooming meadows — adventure awaits in every season.</p>
+        </div>
+        <div class="activities-grid">
+            <div class="activity-card" style="background-image: url('https://images.unsplash.com/photo-1551524559-8af4e6624178?w=600');">
+                <div class="activity-card-content"><h4>Winter</h4><p>Ski in Val d'Isère, Alpe d'Huez, 16‑km “Sarenne” run.</p></div>
+            </div>
+            <div class="activity-card" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600');">
+                <div class="activity-card-content"><h4>Summer</h4><p>Hike meadows, cycle passes, paddle Annecy Lake.</p></div>
+            </div>
+            <div class="activity-card" style="background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600');">
+                <div class="activity-card-content"><h4>Autumn</h4><p>Golden larches, quiet trails, fewer crowds.</p></div>
+            </div>
+            <div class="activity-card" style="background-image: url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600');">
+                <div class="activity-card-content"><h4>Spring</h4><p>Blossoming meadows, mild weather, renewal.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cuisine -->
+    <section class="cuisine-section" id="cuisine">
+        <div class="cuisine-grid">
+            <div class="cuisine-text">
+                <h2>Alpine Cuisine</h2>
+                <p>Indulge in the hearty, soul‑warming flavours of the mountains.</p>
+                <ul class="cuisine-list">
+                    <li><span>🫕</span> <strong>Fondue Savoyarde</strong> – rich melted cheese</li>
+                    <li><span>🧀</span> <strong>Raclette</strong> – cheese over potatoes</li>
+                    <li><span>🏔️</span> <strong>Local Cheeses</strong> – Beaufort, Reblochon</li>
+                    <li><span>🫐</span> <strong>Blueberry Tart</strong> – alpine berries</li>
+                    <li><span>🥃</span> <strong>Génépi</strong> – herbal liqueur</li>
+                </ul>
+            </div>
+            <img src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800" alt="Alpine fondue" class="cuisine-img" loading="lazy">
+        </div>
+    </section>
+
+    <!-- Tips -->
+    <section class="section" id="tips">
+        <div class="section-header">
+            <h2 class="section-title">Practical Tips</h2>
+            <p class="section-subtitle">Plan your alpine escape with ease.</p>
+        </div>
+        <div class="tips-grid">
+            <div class="tip-card"><h3 style="font-weight:400;">📅 Best Time</h3><p>Winter snow, summer hike, spring/autumn peace.</p></div>
+            <div class="tip-card"><h3 style="font-weight:400;">🏨 Book Ahead</h3><p>Reserve months in advance in peak seasons.</p></div>
+            <div class="tip-card"><h3 style="font-weight:400;">🚂 Getting Around</h3><p>Train Annecy–Chamonix ~2.5h or Route des Grandes Alpes.</p></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© France Alps — Your Alpine Story Begins Here</p>
+    </footer>
+
+    <!-- Audio element and control button -->
+    <audio id="bgAudio" loop preload="auto">
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_c6c8f3e5b9.mp3" type="audio/mpeg">
+    </audio>
+    <button class="audio-control" id="audioToggle" aria-label="Toggle ambient music">
+        <span id="audioIcon">🔇</span>
+    </button>
+
+    <script>
+        (function() {
+            // Canvas fog & droplets (unchanged)
+            const canvas = document.getElementById('heroCanvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, particles = [];
+            const PARTICLE_COUNT = 120;
+
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                initParticles();
+            }
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        radius: Math.random() * 50 + 10,
+                        opacity: Math.random() * 0.15 + 0.03,
+                        speedX: (Math.random() - 0.5) * 0.3,
+                        speedY: (Math.random() - 0.5) * 0.2 - 0.1,
+                        type: 'fog'
+                    });
+                }
+                for (let i = 0; i < 70; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        radius: Math.random() * 3 + 1,
+                        opacity: Math.random() * 0.4 + 0.2,
+                        speedX: (Math.random() - 0.5) * 0.8,
+                        speedY: Math.random() * 0.8 + 0.2,
+                        type: 'droplet'
+                    });
+                }
+            }
+            function drawParticles() {
+                ctx.clearRect(0, 0, width, height);
+                for (let p of particles) {
+                    ctx.beginPath();
+                    if (p.type === 'fog') {
+                        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
+                        grad.addColorStop(0, `rgba(255,255,255,${p.opacity})`);
+                        grad.addColorStop(0.7, `rgba(255,255,255,${p.opacity*0.5})`);
+                        grad.addColorStop(1, 'rgba(255,255,255,0)');
+                        ctx.fillStyle = grad;
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                        ctx.fill();
+                    } else {
+                        ctx.fillStyle = `rgba(255,255,255,${p.opacity})`;
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                }
+            }
+            function updateParticles() {
+                for (let p of particles) {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < -50) p.x = width + 50;
+                    if (p.x > width + 50) p.x = -50;
+                    if (p.y < -50) p.y = height + 50;
+                    if (p.y > height + 50) p.y = -50;
+                    p.speedX += (Math.random()-0.5)*0.02;
+                    p.speedY += (Math.random()-0.5)*0.02;
+                    p.speedX *= 0.99;
+                    p.speedY *= 0.99;
+                }
+            }
+            let mouseX = width/2, mouseY = height/2;
+            window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+            const origUpdate = updateParticles;
+            updateParticles = function() {
+                for (let p of particles) {
+                    if (p.type === 'droplet') {
+                        const dx = mouseX - p.x, dy = mouseY - p.y, dist = Math.sqrt(dx*dx+dy*dy);
+                        if (dist < 150) { p.speedX += dx*0.0002; p.speedY += dy*0.0002; }
+                    }
+                }
+                origUpdate();
+            };
+            function animateCanvas() { updateParticles(); drawParticles(); requestAnimationFrame(animateCanvas); }
+            window.addEventListener('resize', resize);
+            resize();
+            animateCanvas();
+
+            // Navbar
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 50));
+
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(a => {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    const t = document.querySelector(a.getAttribute('href'));
+                    if (t) t.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Reveal on scroll
+            const revealEls = document.querySelectorAll('.dest-card, .activity-card, .tip-card, .welcome-img, .cuisine-img');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = 1; e.target.style.transform = 'translateY(0)'; } });
+            }, { threshold: 0.1 });
+            revealEls.forEach(el => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s, transform 0.6s';
+                observer.observe(el);
+            });
+
+            // Audio toggle
+            const audio = document.getElementById('bgAudio');
+            const toggle = document.getElementById('audioToggle');
+            const icon = document.getElementById('audioIcon');
+            let playing = false;
+            toggle.addEventListener('click', () => {
+                if (playing) {
+                    audio.pause();
+                    icon.textContent = '🔇';
+                    toggle.classList.remove('playing');
+                } else {
+                    audio.play().then(() => {
+                        icon.textContent = '🎵';
+                        toggle.classList.add('playing');
+                    }).catch(() => {});
+                }
+                playing = !playing;
+            });
+        })();
+    </script>
+</body>
+</html>
